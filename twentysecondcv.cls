@@ -4,7 +4,7 @@
 % Version 1.0 (5/23/19)
 %
 % Original author:
-% Carmine Spagnuolo (cspagnuolo@unisa.it) with major modifications by 
+% Carmine Spagnuolo (cspagnuolo@unisa.it) with major modifications by
 % Vel (vel@LaTeXTemplates.com) and finally by
 % Augusto Cunha (contact@augustoicaro.com)
 %
@@ -22,6 +22,8 @@
 %----------------------------------------------------------------------------------------
 
 \RequirePackage[sfdefault]{ClearSans}
+\RequirePackage[main=brazilian]{babel}
+\RequirePackage[utf8]{inputenc}
 \RequirePackage[T1]{fontenc}
 \RequirePackage{tikz}
 \RequirePackage{xcolor}
@@ -95,7 +97,7 @@
 
 \def\ls#1{\lsA#1;;}
 \def\lsA#1;{\ifx;#1;\else \dosomething{#1}\expandafter\lsA\fi}
-\def\dosomething#1{\item #1} 
+\def\dosomething#1{\item #1}
 %----------------------------------------------------------------------------------------
 %	 SIDEBAR DEFINITIONS
 %----------------------------------------------------------------------------------------
@@ -126,6 +128,8 @@
 \setboolean{cv@interest}{false}
 \newboolean{cv@profile}
 \setboolean{cv@profile}{false}
+\newboolean{cv@skills}
+\setboolean{cv@skills}{false}
 \newcommand{\cvdate}[1]{\renewcommand{\cvdate}{#1}}
 \newcommand{\cvmail}[1]{\renewcommand{\cvmail}{#1}}
 \newcommand{\cvgithub}[1]{\renewcommand{\cvgithub}{#1}}
@@ -159,10 +163,11 @@
 \newcommand*\icon[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=1pt, fill=mainblue,mainblue,text=white] (char) {#1};}}
 
 % Command for printing skill progress bars
-\newcommand\skills[1]{ 
-	\renewcommand{\skills}{
+\newcommand\skills[2]{
+	\setboolean{cv@skills}{true}\renewcommand{\skills}{%
+	    \profilesection{#1}\vspace{6pt}
 		\begin{tikzpicture}
-			\foreach [count=\i] \x/\y in {#1}{
+			\foreach [count=\i] \x/\y in {#2}{
 				\draw[fill=maingray,maingray] (0,-\i) rectangle (6,-\i+0.4);
 				\draw[fill=white,mainblue](0,-\i) rectangle (1.2*\y,-\i+0.4);
 				\node [above right] at (0,-\i+0.4) {\x};
@@ -181,10 +186,10 @@
 }
 
 % Command for printing skills text
-\newcommand\skillstext[1]{ 
+\newcommand\skillstext[1]{
 	\renewcommand{\skillstext}{
 		\begin{flushleft}
-			\foreach [count=\i] \x/\y in {#1}{ 
+			\foreach [count=\i] \x/\y in {#1}{
 				\x$ \star $\y
 			}
 		\end{flushleft}
@@ -213,9 +218,9 @@
 	%------------------------------------------------
 
 	\begin{textblock}{6}(0.5, 0.2)
-			
+
 		%------------------------------------------------
-		
+
 		\ifthenelse{\equal{\profilepic}{}}{}{
 			\begin{center}
 				\begin{tikzpicture}[x=\imagescale,y=-\imagescale]
@@ -260,20 +265,20 @@
 	        \emergencystretch=3em
 	        \interest
 	    }{}
-		
-		
+
+
 
 		%------------------------------------------------
 
-		\profilesection{Skills}
+		\ifthenelse{\boolean{cv@skills}}{
+    		\skills
+    		%\skillstext
+    		{\scriptsize
+    		A escala de habilidade vai de 0 (Conhecimento Fundamental) a 5 (Expert).}
+    	}{}
 
-		\skills
-		%\skillstext
-		{\scriptsize 
-		The skill scale is from 0 (Fundamental Awareness) to 5 (Expert).}
-			
 		%------------------------------------------------
-			
+
 	\end{textblock}
 }
 
@@ -342,9 +347,9 @@
 		{\footnotesize#6}\\%
 		#7\vspace{\parsep}
 	}}\pgfmathparse{0.0351459804*(\ht\mybox+\dp\mybox)}\global\let\pheight\pgfmathresult%
-	\pgfmathparse{0.0351459804*(\dp\mybox)-0.1}\global\let\pshift\pgfmathresult\\[-2ex]
+	\pgfmathparse{0.0351459804*(\dp\mybox)-0.13}\global\let\pshift\pgfmathresult\\[-2.1ex]
 
-    
+
 	\raisebox{-\pshift cm}{
 	    \timeline{\pheight}{#1}{#2}{#3}{#4}
 	}
@@ -358,42 +363,16 @@
 }
 
 \newcommand{\twentyitem}[4]{%
-	#1
-	&
-	\parbox[t]{0.805\textwidth}{%
+	#1&\parbox[]{0.805\textwidth}{%
 		\textbf{#2}%
 		\hfill%
 		{\footnotesize#3}\\%
-		#4\vspace{\parsep}
-	}\\
-}
-
-\newcommand{\twentyactualitemtime}[7]{%
-    &
-	\sbox{\mybox}{\parbox[]{0.805\textwidth}{%
-		\bf#5 \mdseries%
-		\hfill%
-		{\footnotesize#6}\\%
-		#7\vspace{\parsep}
-	}}\pgfmathparse{0.0351459804*(\ht\mybox+\dp\mybox)}\global\let\pheight\pgfmathresult%
-	\pgfmathparse{0.0351459804*(\dp\mybox)-0.25}\global\let\pshift\pgfmathresult\\[-2ex]
-
-	\raisebox{-\pshift cm}{
-	    \timeline{\pheight}{#1}{#2}{#3}{#4}
-	}
-	&
-	\parbox[t]{0.805\textwidth}{%
-		\bf#5 \mdseries%
-		\hfill%
-		{\footnotesize#6}\\%
-		#7\vspace{\parsep}
+		#4\vspace{\parsep}%
 	}\\
 }
 
 \newcommand{\twentyactualitem}[4]{%
-	\bf#1 \mdseries%
-	&
-	\parbox[t]{0.805\textwidth}{%
+	\bf#1&\parbox[t]{0.805\textwidth}{%
 		\bf#2 \mdseries%
 		\hfill%
 		{\footnotesize#3}\\%
